@@ -40,7 +40,7 @@ const Navbar = () => {
                         )}
                     </div>
                     <Link href="/">Home</Link>
-                    <Link href="#">Earning</Link>
+                    <Link href="/customers-details">Customers Details</Link>
                     <Link href="#">Learning</Link>
                     <Link href="#">Kids</Link>
                     <Link href="#">Pricing</Link>
