@@ -1,18 +1,12 @@
 "use client"
+import {  Card } from '@tremor/react';
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  Paper,
-} from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PendingIcon from '@mui/icons-material/Pending';
 import { LineChart1 } from '../../../components/Charts/index';
+import SidebarLayout, { Sidebar } from '../../../components/sidebar/index';
 // import axios from 'axios';
 
 function Dashboard() {
@@ -56,49 +50,16 @@ function Dashboard() {
   );
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Total Customers"
-            value={stats.totalCustomers}
-            icon={PeopleIcon}
-            color="#1976d2"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Total Loan Amount"
-            value={`₹${stats.totalLoanAmount.toLocaleString()}`}
-            icon={PaymentsIcon}
-            color="#2e7d32"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Paid Customers"
-            value={stats.paidCustomers}
-            icon={CheckCircleIcon}
-            color="#1b5e20"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Pending Customers"
-            value={stats.pendingCustomers}
-            icon={PendingIcon}
-            color="#ed6c02"
-          />
-        </Grid>
-      </Grid>
-
-      <Paper sx={{ mt: 3, p: 2 }}>
-        <Typography variant="h6" gutterBottom>
-          Recent Activity
-        </Typography>
-        {/* Add recent activity list here */}
-      </Paper>
-    </Box>
+    <>
+        
+      <div className="md:px-14 mx-2 pt-4 pb-4 border border-black h-screen">
+        <Card className="h-auto flex flex-col">
+          <div className="flex flex-row justify-between items-center">
+            hello world
+          </div>
+        </Card>
+      </div>
+  </>
   );
 }
 

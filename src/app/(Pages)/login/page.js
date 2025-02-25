@@ -1,101 +1,145 @@
-"use client"
-import React, { useState } from "react";
-import { useRouter } from 'next/navigation';
+"use client";
 
-const Login = () => {
-    const [loading, setLoading] = useState(false);
-    const router = useRouter();
+import { useState } from "react";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
+import { axiosInstance } from "@/network/axiosInstance";
+import { useRouter } from "next/navigation";
 
-    const handleSubmit = () => {
-        setLoading(true);
-        router.push('/dashboard');
-        setLoading(false);
-        console.log('hello')
+const LoginSignup = () => {
+  const router = useRouter();
+  const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    name: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const endpoint = isLogin
+        ? "https://repaykarobackend.onrender.com/auth/login"
+        : "https://repaykarobackend.onrender.com/auth/signup";
+
+      const payload = isLogin
+        ? { email: formData.email, password: formData.password }
+        : { name: formData.name, email: formData.email, password: formData.password };
+
+      const response = await axiosInstance.post(endpoint, payload);
+   
+      toast.success(response.data.message || (isLogin ? "Login Successful!" : "Signup Successful!"));
+      router.push('/dashboard')
+
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong!");
+    } finally {
+      setLoading(false);
     }
-    return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-100 overflow-x-hidden px-4">
+  };
 
-            <div className="w-full max-w-md p-8 bg-white rounded-xl shadow-lg">
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded-xl shadow-lg w-96 relative overflow-hidden">
+        <h2 className="text-2xl font-bold text-center mb-6">
+          {isLogin ? "Login as User" : "Signup as Customer"}
+        </h2>
 
-                <h2 className="text-center text-3xl font-bold text-green-500 mb-6">Login</h2>
-
-
-                <form className="space-y-6">
-
-                    <div className="relative">
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            className="peer bg-transparent h-12 w-full rounded-lg text-gray-900 placeholder-transparent ring-2 px-3 ring-gray-400 focus:ring-green-500 focus:outline-none"
-                            placeholder="Email"
-                            required
-                        />
-                        <label
-                            htmlFor="email"
-                            className="absolute cursor-text left-3 -top-3 text-sm text-gray-500 bg-white px-1 transition-all 
-                peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-3 
-                peer-focus:-top-3 peer-focus:text-green-500 peer-focus:text-sm"
-                        >
-                            Email
-                        </label>
-                    </div>
-
-
-                    <div className="relative">
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            className="peer bg-transparent h-12 w-full rounded-lg text-gray-900 placeholder-transparent ring-2 px-3 ring-gray-400 focus:ring-green-500 focus:outline-none"
-                            placeholder="Password"
-                            required
-                        />
-                        <label
-                            htmlFor="password"
-                            className="absolute cursor-text left-3 -top-3 text-sm text-gray-500 bg-white px-1 transition-all 
-                peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-3 
-                peer-focus:-top-3 peer-focus:text-green-500 peer-focus:text-sm"
-                        >
-                            Password
-                        </label>
-                    </div>
-
-                    {/* Submit Button */}
-                    {/* <button
-            type="submit"
-            className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold text-lg py-3 rounded-lg transition"
+      
+        <div className="flex bg-gray-200 rounded-lg p-1 mb-6 relative">
+          <motion.div
+            className="absolute top-0 bottom-0 left-0 w-1/2 bg-green-400 rounded-lg"
+            initial={{ x: isLogin ? "0%" : "100%" }}
+            animate={{ x: isLogin ? "0%" : "100%" }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+          />
+          <button
+            className={`flex-1 py-2 rounded-lg font-semibold relative z-10 ${
+              isLogin ? "text-white" : "text-gray-700"
+            }`}
+            onClick={() => setIsLogin(true)}
           >
             Login
-          </button> */}
-                    <button
-                        className={`w-full mt-4 bg-green-500 hover:bg-green-600 text-white font-semibold text-lg py-3 rounded-lg transition ${(loading) ? 'opacity-50 pointer-events-none' : ''
-                            }`}
-                        onClick={handleSubmit}
-                        disabled={loading}
-                    >
-                        <div className="flex items-center justify-center">
-                            <span>Submitting</span>
-                            {loading && (
-                                <svg
-                                    aria-hidden="true"
-                                    className="inline w-4 h-4 ml-2 text-white animate-spin fill-blue-600"
-                                    viewBox="0 0 100 101"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
-                                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
-                                </svg>
-                            )}
-                        </div>
-                    </button>
-                </form>
-
-
-            </div>
+          </button>
+          <button
+            className={`flex-1 py-2 rounded-lg font-semibold relative z-10 ${
+              !isLogin ? "text-white" : "text-gray-700"
+            }`}
+            onClick={() => setIsLogin(false)}
+          >
+            Signup
+          </button>
         </div>
-    );
+
+        <motion.div
+          key={isLogin ? "login" : "signup"}
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -50 }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+        >
+          <form onSubmit={handleSubmit}>
+            {!isLogin && (
+              <input
+                type="text"
+                name="name"
+                placeholder="Full Name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            )}
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+
+            {isLogin && (
+              <p className="text-green-400 text-sm cursor-pointer mb-4">
+                Forgot password?
+              </p>
+            )}
+
+            {/* Submit Button with Loader */}
+            <button
+              type="submit"
+              className="w-full bg-green-400 text-white py-3 rounded-lg font-semibold flex items-center justify-center"
+              disabled={loading}
+            >
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : isLogin ? (
+                "Login"
+              ) : (
+                "Signup"
+              )}
+            </button>
+          </form>
+        </motion.div>
+      </div>
+    </div>
+  );
 };
 
-export default Login;
+export default LoginSignup;
