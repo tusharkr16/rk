@@ -39,6 +39,7 @@ const LoginSignup = () => {
       const response = await axiosInstance.post(endpoint, payload);
       Cookies.set("token", JSON.stringify(response.data.jwtToken), { expires: 7 });
       toast.success(response.data.message || (isLogin ? "Login Successful!" : "Signup Successful!"));
+      router.push('/dashboard')
       // login(response.data.jwtToken)
 
     } catch (error) {
