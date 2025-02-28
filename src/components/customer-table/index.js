@@ -161,7 +161,7 @@ function CustomerList() {
 
   return (
     <Box sx={{ width: "100%", overflowX: "auto", p: 2 }}>
-      <Typography variant="h5" sx={{ mb: 2 }}>Customer List</Typography>
+      {/* <Typography variant="h5" sx={{ mb: 2 }}>Customer List</Typography> */}
 
       <Box sx={{ width: "100%", minWidth: "800px", overflowX: "auto" }}>
         <DataGrid

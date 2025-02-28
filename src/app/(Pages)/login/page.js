@@ -5,8 +5,11 @@ import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { axiosInstance } from "@/network/axiosInstance";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import Cookies from 'js-cookie';
 
 const LoginSignup = () => {
+  const { login } = useAuth();
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -27,16 +30,16 @@ const LoginSignup = () => {
     try {
       const endpoint = isLogin
         ? "https://repaykarobackend.onrender.com/auth/login"
-        : "https://repaykarobackend.onrender.com/auth/signup";
+        : "https://repaykarobackend.onrender.com/users/create";
 
       const payload = isLogin
         ? { email: formData.email, password: formData.password }
         : { name: formData.name, email: formData.email, password: formData.password };
 
       const response = await axiosInstance.post(endpoint, payload);
-   
+      Cookies.set("token", JSON.stringify(response.data.jwtToken), { expires: 7 });
       toast.success(response.data.message || (isLogin ? "Login Successful!" : "Signup Successful!"));
-      router.push('/dashboard')
+      // login(response.data.jwtToken)
 
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong!");

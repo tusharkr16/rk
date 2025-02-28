@@ -1,73 +1,97 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Home, Settings, LogOut, Menu, Users, Briefcase, BarChart, Megaphone } from 'lucide-react';
+import Link from 'next/link';
+import { Target, UserPlus, Upload, ChevronDown, LogOut, LogOutIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/context/AuthContext';
 
-const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const router = useRouter();
+export default function Sidebar() {
+  const [active, setActive] = useState('Home');
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const { logoutAdmin } = useAuth();
 
-  // Toggle sidebar open/close
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
-  // Close sidebar when an item is clicked (for mobile)
-  const closeSidebar = () => {
-    if (isMobile) setIsOpen(false);
-  };
+  const menuItems = [
+    { name: 'Customer-List', href: '/dashboard', icon: <Target size={20} /> },
+    {
+      name: 'Uploads',
+      icon: <Upload size={20} />,
+      submenu: [
+        { name: 'Upload Monthly Lead', href: '/upload-customers' },
+        { name: 'Upload Paid Lead', href: '/upload-paid-lead' },
+      ],
+    },
+    { name: 'Create User', href: '/user', icon: <UserPlus size={20} /> },
+  ];
 
   return (
-    <>
-      {/* Sidebar Navigation */}
-      <motion.nav
-        animate={{ width: isOpen ? 250 : 80 }}
-        className="fixed z-10 left-0 top-0 bottom-0 bg-green-400 text-white flex flex-col p-5 shadow-md transition-all duration-500"
-      >
-        {/* Hamburger Button (only visible on mobile) */}
-        <button
-          onClick={toggleSidebar}
-          className="lg:hidden absolute top-4 right-4 bg-green-500 text-white p-2 rounded-md"
-        >
-          <Menu size={24} />
-        </button>
-
-        {/* App Name */}
-        <div className="mb-6 text-xl font-bold text-center">{isOpen ? 'My App' : 'M'}</div>
-
-        {/* Sidebar Items */}
-        <ul className="flex flex-col gap-6 flex-1">
-          {[ 
-            { icon: Home, label: 'Dashboard' },
-            { icon: Settings, label: 'Settings' },
-            { icon: Users, label: 'Customers' },
-            { icon: Briefcase, label: 'Collections' },
-            { icon: Megaphone, label: 'Marketing' },
-            { icon: BarChart, label: 'Reports' },
-            { icon: LogOut, label: 'Logout', action: () => router.push('/') },
-          ].map(({ icon: Icon, label, action }, index) => (
-            <li
-              key={index}
-              onClick={() => {
-                if (action) {
-                  action(); // Execute custom action if defined
-                }
-                if (!isOpen) setIsOpen(true); // Open sidebar when clicking an icon in mobile view
-                else closeSidebar(); // Close when clicking a full item
-              }}
-              className="flex items-center gap-3 cursor-pointer p-2 hover:bg-green-600 rounded-lg"
+    <div className="min-h-screen w-64 bg-gray-900 text-white flex flex-col p-4">
+      <h2 className="text-xl font-bold mb-6">Dashboard</h2>
+      <nav className="flex flex-col space-y-2 flex-grow">
+        {menuItems.map((item) =>
+          item.submenu ? (
+            <div key={item.name}>
+              <button
+                className="flex items-center justify-between w-full p-3 rounded-lg transition duration-200 hover:bg-gray-700"
+                onClick={() => setIsUploadOpen(!isUploadOpen)}
+              >
+                <div className="flex items-center">
+                  {item.icon}
+                  <span className="ml-3">{item.name}</span>
+                </div>
+                <motion.div
+                  animate={{ rotate: isUploadOpen ? 180 : 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ChevronDown size={18} />
+                </motion.div>
+              </button>
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={isUploadOpen ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="overflow-hidden"
+              >
+                <div className="ml-6 flex flex-col space-y-1">
+                  {item.submenu.map((sub) => (
+                    <Link
+                      key={sub.name}
+                      href={sub.href}
+                      className={`flex items-center p-2 rounded-lg transition duration-200 hover:bg-gray-700 ${active === sub.name ? 'bg-gray-700' : ''
+                        }`}
+                      onClick={() => setActive(sub.name)}
+                    >
+                      <span>{sub.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          ) : (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={`flex items-center p-3 rounded-lg transition duration-200 hover:bg-gray-700 ${active === item.name ? 'bg-gray-700' : ''
+                }`}
+              onClick={() => setActive(item.name)}
             >
-              <Icon size={24} />
-              {isOpen && <span>{label}</span>}
-            </li>
-          ))}
-        </ul>
-      </motion.nav>
-    </>
-  );
-};
+              {item.icon}
+              <span className="ml-3">{item.name}</span>
+            </Link>
+          )
+        )}
+      </nav>
 
-export default Sidebar;
+      <div className="mt-auto">
+        <button
+          className="flex items-center p-3 rounded-lg transition duration-200 hover:bg-gray-700 w-full"
+          onClick={() => logoutAdmin()}
+        >
+          <LogOutIcon size={20} />
+          <span className="ml-3">Log Out</span>
+        </button>
+      </div>
+
+    </div>
+  );
+}

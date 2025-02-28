@@ -20,27 +20,8 @@ const Navbar = () => {
 
 
                 <div className="hidden md:flex space-x-6 text-black font-medium">
-                    <div className="relative">
-                        <button
-                            onClick={() => setDropdownOpen(!dropdownOpen)}
-                            className="focus:outline-none flex items-center space-x-1"
-                        >
-                            <span>Investing</span>
-                            <span>▼</span>
-                        </button>
-                        {dropdownOpen && (
-                            <div className="absolute top-8 left-0 bg-white shadow-md rounded-md w-32 p-2">
-                                <Link href="#" className="block px-2 py-1 hover:bg-gray-100">
-                                    Stocks
-                                </Link>
-                                <Link href="#" className="block px-2 py-1 hover:bg-gray-100">
-                                    ETFs
-                                </Link>
-                            </div>
-                        )}
-                    </div>
                     <Link href="/">Home</Link>
-                    <Link href="/customers-details">Customers Details</Link>
+                    <Link href="#">Customers Details</Link>
                     <Link href="#">Learning</Link>
                     <Link href="#">Kids</Link>
                     <Link href="#">Pricing</Link>
